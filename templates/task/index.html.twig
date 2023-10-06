@@ -10,10 +10,18 @@
 
 <div class="example-wrapper">
     <h1>Ma super liste de tâches</h1>
+    <a href="{{ path('task_new') }}"><i class="fa-regular fa-square-plus"></i></a>
+    <a href="{{ path('task_delete_all') }}"><i class="fa-solid fa-dumpster"></i></a>
 
     <ul>
         {% for task in tasks %}
-            <li>{{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y') }}</li>
+            <li>
+                <a href="{{ path('task_show', {'id': task.id}) }}">
+                    {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y') }} 
+                </a>
+                <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
+                <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
+            </li>
         {% else %}
             <li>Pas de tâches à afficher</li>
         {% endfor %}
