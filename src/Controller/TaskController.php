@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\Task;
+use App\Entity\Tasks;
 
 
 class TaskController extends AbstractController
@@ -18,7 +18,7 @@ class TaskController extends AbstractController
 
     private $entityManager;
 
-    public function __construct($entityManager)
+    public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -26,40 +26,40 @@ class TaskController extends AbstractController
     #[Route('/', name: 'task_index', methods: ['GET'])]
     public function index(): Response
     {
-        $tasks = $this->entityManager->getRepository(Task::class)->findAll();
+        $tasks = $this->entityManager->getRepository(Tasks::class)->findAll();
 
-        return $this->render('tasks/index.html.twig', [
+        return $this->render('task/index.html.twig', [
             'tasks' => $tasks,
         ]);
     }
 
-    #[Route('/{id}', name: 'task_show', methods: ['GET'])]
+    // #[Route('/{id}', name: 'task_show', methods: ['GET'])]
 
-    public function show(Task $task): Response
-    {
-        
-        return $this->render('tasks/show.html.twig', [
-            'task' => $task,
-        ]);
-    }
+    // public function show(): Response
+    // {
+    //     $task = $this->entityManager->getRepository(Task::class)->findById();
+    //     return $this->render('tasks/show.html.twig', [
+    //         'task' => $task,
+    //     ]);
+    // }
     
-    #[Route('/task/new', name: 'task_new', methods: ['GET', 'POST'])]
-    public function newTask(Request $request): Response {
-        $task = new Tasks();
-        $form = $this->createForm(TaskType::class, $task);
-        $form->handleRequest($request); 
+    // #[Route('/task/new', name: 'task_new', methods: ['GET', 'POST'])]
+    // public function newTask(Request $request): Response {
+    //     $task = new Tasks();
+    //     $form = $this->createForm(TaskType::class, $task);
+    //     $form->handleRequest($request); 
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->entityManager;
-            $entityManager->persist($task);
-            $entityManager->flush();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager = $this->entityManager;
+    //         $entityManager->persist($task);
+    //         $entityManager->flush();
     
-            return $this->redirectToRoute('tasks');
-        }
+    //         return $this->redirectToRoute('tasks');
+    //     }
     
-        return $this->render('tasks/new.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
+    //     return $this->render('tasks/new.html.twig', [
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
 
 }
