@@ -1,3 +1,3 @@
 # TO DO LIST
 
-Discovery : PHP, mySQL and Doctrine
+Discovery : PHP (symfony), mySQL and Doctrine
