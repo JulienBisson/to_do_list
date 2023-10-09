@@ -35,11 +35,16 @@ class TaskController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'task_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'task_show', methods: ['GET'], requirements: ['id' => '\d+'])]
 
     public function show(int $id): Response
     {
         $task = $this->entityManager->getRepository(Tasks::class)->find($id);
+
+        if (!$task) {
+            throw $this->createNotFoundException('La tâche demandée n\'existe pas');
+        }
+
         return $this->render('task/show.html.twig', [
             'task' => $task,
         ]);
