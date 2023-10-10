@@ -4,21 +4,20 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Tasks;
-use App\Entity\Task;
+use Symfony\Component\Security\Core\Security;
 use App\Form\TaskType;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 class TaskController extends AbstractController
 {
 
     private $entityManager;
+    private $user;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -26,9 +25,10 @@ class TaskController extends AbstractController
     }
 
     #[Route('/', name: 'task_index', methods: ['GET'])]
-    public function index(): Response
+    public function index(UserInterface $user): Response
     {
-        $tasks = $this->entityManager->getRepository(Tasks::class)->findAll();
+        $user = $this->getUser();
+        $tasks = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
 
         return $this->render('task/index.html.twig', [
             'tasks' => $tasks,
@@ -51,12 +51,15 @@ class TaskController extends AbstractController
     }
     
     #[Route('/task/new', name: 'task_new', methods: ['GET', 'POST'])]
-    public function newTask(Request $request): Response {
+    public function newTask(Request $request, Security $security): Response {
+        $user = $this->getUser();
         $task = new Tasks();
+
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request); 
         
         if ($form->isSubmitted() && $form->isValid()) {
+            $task->setUser($user);
             $entityManager = $this->entityManager;
             $entityManager->persist($task);
             $entityManager->flush();
@@ -76,7 +79,7 @@ class TaskController extends AbstractController
 
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request); 
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
 
@@ -91,9 +94,14 @@ class TaskController extends AbstractController
 
     #[Route('/{id}/delete', name: 'task_delete', methods: ['GET', 'POST'])]
 
-    public function deleteTask(Request $request, int $id): Response {
+    public function deleteTask(Request $request, int $id, Security $security): Response {
+        $user = $security->getUser();
         $task = $this->entityManager->getRepository(Tasks::class)->find($id);
     
+        if ($task->getUser() !== $user) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas la permission de supprimer cette tâche.');
+        }
+
         $this->entityManager->remove($task);
         $this->entityManager->flush();
 
@@ -102,10 +110,15 @@ class TaskController extends AbstractController
 
     #[Route('/delete/all', name: 'task_delete_all', methods: ['GET', 'POST'])]
 
-    public function deleteAllTasks(): Response {
+    public function deleteAllTasks(Security $security): Response {
+        $user = $security->getUser();
         $tasks = $this->entityManager->getRepository(Tasks::class)->findAll();
 
+
         foreach ($tasks as $task) {
+            if ($task->getUser() !== $user) {
+                throw $this->createAccessDeniedException('Vous n\'avez pas la permission de supprimer cette tâche.');
+            }
             $this->entityManager->remove($task);
         }
         

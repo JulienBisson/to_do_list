@@ -31,7 +31,7 @@ class Tasks
     private ?Lists $list = null;
 
     #[ORM\ManyToOne]
-    private ?Users $user = null;
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -98,12 +98,12 @@ class Tasks
         return $this;
     }
 
-    public function getUser(): ?Users
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(?Users $user): static
+    public function setUser(?User $user): static
     {
         $this->user = $user;
 
