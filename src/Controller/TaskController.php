@@ -28,10 +28,21 @@ class TaskController extends AbstractController
     public function index(UserInterface $user): Response
     {
         $user = $this->getUser();
-        $tasks = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
 
+    // Vérifie si l'utilisateur est un super admin
+    if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
+        // Requête pour le super admin
+        $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+        $tasksUsers = $this->entityManager->getRepository(Tasks::class)->findAll();
+    } else {
+        // Requête pour les utilisateurs normaux
+        $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+        $tasksUsers = [];
+    }
+    
         return $this->render('task/index.html.twig', [
-            'tasks' => $tasks,
+            'tasksAdmin' => $tasksAdmin,
+            'tasksUsers' => $tasksUsers,
         ]);
     }
 
