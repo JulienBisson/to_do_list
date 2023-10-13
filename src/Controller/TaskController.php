@@ -40,7 +40,8 @@ class TaskController extends AbstractController
         ->getResult();
     } else {
         // Requête pour les utilisateurs normaux (excluant les tâches du super admin)
-        $tasksUsers = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+        $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+        $tasksUsers = [];
     }
     
     
