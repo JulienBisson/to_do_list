@@ -34,7 +34,7 @@
         {% for task in tasksUsers %}
             <li>
                 <a href="{{ path('task_show', {'id': task.id}) }}">
-                    {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y') }} 
+                    {{ task.user.email|split('@')[0]|capitalize }} - {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y') }} 
                 </a>
                 <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
                 <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
