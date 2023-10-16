@@ -73,9 +73,17 @@ class TaskController extends AbstractController
 
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request); 
+
+           // Vérifie si l'utilisateur actuel est super admin
+    if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+        // Utilisateur normal peut ajouter seulement pour soi-même
+        $task->setUser($user);
+    }
+
+    $form = $this->createForm(TaskType::class, $task);
+    $form->handleRequest($request); 
         
         if ($form->isSubmitted() && $form->isValid()) {
-            $task->setUser($user);
             $entityManager = $this->entityManager;
             $entityManager->persist($task);
             $entityManager->flush();
@@ -97,6 +105,10 @@ class TaskController extends AbstractController
         $form->handleRequest($request); 
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                // Si oui, l'utilisateur peut changer le propriétaire de la tâche
+                $task->setUser($form->get('user')->getData());
+            }
             $this->entityManager->flush();
 
             return $this->redirectToRoute('task_index');
@@ -114,7 +126,13 @@ class TaskController extends AbstractController
         $user = $security->getUser();
         $task = $this->entityManager->getRepository(Tasks::class)->find($id);
     
-        if ($task->getUser() !== $user) {
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+
+            $this->entityManager->remove($task);
+            $this->entityManager->flush();
+
+        } elseif ($task->getUser() !== $user) {
+            
             throw $this->createAccessDeniedException('Vous n\'avez pas la permission de supprimer cette tâche.');
         }
 
