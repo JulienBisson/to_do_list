@@ -151,12 +151,17 @@ class TaskController extends AbstractController
         $user = $security->getUser();
         $tasks = $this->entityManager->getRepository(Tasks::class)->findAll();
 
-
-        foreach ($tasks as $task) {
-            if ($task->getUser() !== $user) {
-                throw $this->createAccessDeniedException('Vous n\'avez pas la permission de supprimer cette tâche.');
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            foreach ($tasks as $task) {
+                $this->entityManager->remove($task);
             }
-            $this->entityManager->remove($task);
+        } else {
+            foreach ($tasks as $task) {
+                if ($task->getUser() !== $user) {
+                    throw $this->createAccessDeniedException('Vous n\'avez pas la permission de supprimer cette tâche.');
+                }
+                $this->entityManager->remove($task);
+            }
         }
         
         $this->entityManager->flush();
