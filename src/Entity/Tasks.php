@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TasksRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TasksRepository::class)]
 class Tasks
@@ -26,6 +27,10 @@ class Tasks
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Choice(choices: ['hight', 'medium', 'low'])]
+    private ?string $priority = 'low';
 
     #[ORM\ManyToOne]
     private ?Lists $list = null;
@@ -82,6 +87,17 @@ class Tasks
     public function setUpdatedAt(?\DateTimeInterface $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getPriority(): ?string
+    {
+        return $this->priority;
+    }
+    public function setPriority(?string $priority): static
+    {
+        $this->priority = $priority;
 
         return $this;
     }
