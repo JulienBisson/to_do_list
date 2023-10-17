@@ -82,8 +82,6 @@ class TaskController extends AbstractController
 
             $task->setCreatedAt(new \DateTimeImmutable('now'));
 
-            dump($task);
-
             $entityManager = $this->entityManager;
             $entityManager->persist($task);
             $entityManager->flush();

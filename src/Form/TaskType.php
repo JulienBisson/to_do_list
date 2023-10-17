@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 
 class TaskType extends AbstractType
@@ -23,11 +24,19 @@ class TaskType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
+            ->add('priority', ChoiceType::class, [
+                'choices' => [
+                    'Hight' => 'hight',
+                    'Medium' => 'medium',
+                    'Low' => 'low',
+                ],
+                'placeholder' => 'Choose a priority',
+            ])
             ->add('user', EntityType::class, [
                 'class' => User::class,
                 'choice_label' => 'email',
                 'required' => true,
-                'placeholder' => 'Sélectionnez un utilisateur',
+                'placeholder' => 'Choose a user',
                 'disabled' => !$this->security->isGranted('ROLE_SUPER_ADMIN'),
             ])
         ;
