@@ -29,21 +29,20 @@ class TaskController extends AbstractController
     {
         $user = $this->getUser();
 
-    // Vérifie si l'utilisateur est un super admin
-    if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
-        // Requête pour le super admin
-        $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
-        $tasksUsers = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
-        ->where('t.user != :superAdminId')
-        ->setParameter('superAdminId', $user->getId())
-        ->getQuery()
-        ->getResult();
-    } else {
-        // Requête pour les utilisateurs normaux (excluant les tâches du super admin)
-        $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
-        $tasksUsers = [];
-    }
-    
+        // Vérifie si l'utilisateur est un super admin
+        if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
+            // Requête pour le super admin
+            $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+            $tasksUsers = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
+            ->where('t.user != :superAdminId')
+            ->setParameter('superAdminId', $user->getId())
+            ->getQuery()
+            ->getResult();
+        } else {
+            // Requête pour les utilisateurs normaux (excluant les tâches du super admin)
+            $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+            $tasksUsers = [];
+        }
     
         return $this->render('task/index.html.twig', [
             'tasksAdmin' => $tasksAdmin,
@@ -73,17 +72,18 @@ class TaskController extends AbstractController
 
         $form = $this->createForm(TaskType::class, $task);
         $form->handleRequest($request); 
-
-           // Vérifie si l'utilisateur actuel est super admin
-    if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
-        // Utilisateur normal peut ajouter seulement pour soi-même
-        $task->setUser($user);
-    }
-
-    $form = $this->createForm(TaskType::class, $task);
-    $form->handleRequest($request); 
         
         if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifie si l'utilisateur actuel est super admin
+            if (!$this->isGranted('ROLE_SUPER_ADMIN')) {
+                // Utilisateur normal peut ajouter seulement pour soi-même
+                $task->setUser($user);
+            }
+
+            $task->setCreatedAt(new \DateTimeImmutable('now'));
+
+            dump($task);
+
             $entityManager = $this->entityManager;
             $entityManager->persist($task);
             $entityManager->flush();
@@ -109,6 +109,9 @@ class TaskController extends AbstractController
                 // Si oui, l'utilisateur peut changer le propriétaire de la tâche
                 $task->setUser($form->get('user')->getData());
             }
+
+            $task->setUpdatedAt(new \DateTimeImmutable('now'));
+            
             $this->entityManager->flush();
 
             return $this->redirectToRoute('task_index');
