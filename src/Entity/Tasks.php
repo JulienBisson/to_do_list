@@ -33,9 +33,6 @@ class Tasks
     private ?string $priority = 'low';
 
     #[ORM\ManyToOne]
-    private ?Lists $list = null;
-
-    #[ORM\ManyToOne]
     private ?User $user = null;
 
     public function getId(): ?int
@@ -101,19 +98,6 @@ class Tasks
 
         return $this;
     }
-
-    public function getList(): ?Lists
-    {
-        return $this->list;
-    }
-
-    public function setList(?Lists $list): static
-    {
-        $this->list = $list;
-
-        return $this;
-    }
-
     public function getUser(): ?User
     {
         return $this->user;
