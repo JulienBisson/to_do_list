@@ -33,9 +33,18 @@ class TaskController extends AbstractController
         if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
             // Requête pour le super admin
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+            $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
+            ->where('t.user = :superAdminId')
+            ->setParameter('superAdminId', $user->getId())
+            // ->groupBy('t.priority')
+            ->orderBy('t.created_at','ASC')
+            ->getQuery()
+            ->getResult();
             $tasksUsers = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
             ->where('t.user != :superAdminId')
             ->setParameter('superAdminId', $user->getId())
+            // ->groupBy('t.priority')
+            ->orderBy('t.created_at','ASC')
             ->getQuery()
             ->getResult();
         } else {
