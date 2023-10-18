@@ -33,20 +33,34 @@ class TaskController extends AbstractController
         if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
             // Requête pour le super admin
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
-            ->where('t.user = :superAdminId')
+            ->where('t.user != :superAdminId')
             ->setParameter('superAdminId', $user->getId())
-            // ->groupBy('t.priority')
-            ->orderBy('t.created_at','ASC')
+            ->orderBy('
+                CASE 
+                    WHEN t.priority = \'hight\' THEN 0
+                    WHEN t.priority = \'medium\' THEN 1
+                    WHEN t.priority = \'low\' THEN 2
+                    ELSE 3
+                END', 'ASC') // Tri par priorité
+            ->addOrderBy('t.created_at', 'ASC') // Tri par date de création
             ->getQuery()
             ->getResult();
             $tasksUsers = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
             ->where('t.user != :superAdminId')
             ->setParameter('superAdminId', $user->getId())
-            // ->groupBy('t.priority')
-            ->orderBy('t.created_at','ASC')
+            ->orderBy('
+                CASE 
+                WHEN t.priority = \'hight\' THEN 0
+                WHEN t.priority = \'medium\' THEN 1
+                WHEN t.priority = \'low\' THEN 2
+                    ELSE 3
+                END', 'ASC') // Tri par priorité
+            ->addOrderBy('t.created_at', 'ASC') // Tri par date de création
             ->getQuery()
             ->getResult();
+
         } else {
             // Requête pour les utilisateurs normaux (excluant les tâches du super admin)
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);

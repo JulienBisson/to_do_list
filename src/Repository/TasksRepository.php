@@ -21,6 +21,16 @@ class TasksRepository extends ServiceEntityRepository
         parent::__construct($registry, Tasks::class);
     }
 
+//     public function findTaskByCriteria(): array
+//     {
+//         $query = $this->createQueryBuilder('t')
+//             ->orderBy('t.created_at', 'ASC')
+//             ->groupBy('t.priority', 'ASC')
+//             ->getQuery();
+// // 
+//             return $query->getResult();
+//     }
+
 //    /**
 //     * @return Tasks[] Returns an array of Tasks objects
 //     */

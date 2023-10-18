@@ -92,7 +92,7 @@ class Tasks
     {
         return $this->priority;
     }
-    public function setPriority(?string $priority): static
+    public function setPriority(string $priority): static
     {
         $this->priority = $priority;
 
