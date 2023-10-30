@@ -13,56 +13,68 @@
 
 <div class="example-wrapper">
     <h1>Ma super liste de tâches</h1>
-    <a href="{{ path('task_search') }}"><i class="fa-solid fa-magnifying-glass"></i></a>
+    <a href="{{ path('search') }}"><i class="fa-solid fa-magnifying-glass"></i></a>
     <a href="{{ path('task_new') }}"><i class="fa-regular fa-square-plus"></i></a>
     <a href="{{ path('task_delete_all') }}"><i class="fa-solid fa-dumpster"></i></a>
 
 {% if is_granted('ROLE_SUPER_ADMIN') %}
-    <h3>Mes tâches</h3>
-    <ul>
-        {% for task in tasksAdmin %}
-            <li>
-                <a href="{{ path('task_show', {'id': task.id}) }}">
-                    {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
-                </a>
-                <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
-                <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
-            </li>
-        {% else %}
-            <li>Pas de tâches à afficher</li>
-        {% endfor %}
-    </ul>
+    {% if tasksAdmin is not empty %}
+        <h3>Mes tâches</h3>
+        <ul>
+            {% for task in tasksAdmin %}
+                <li>
+                    <a href="{{ path('task_show', {'id': task.id}) }}">
+                        {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
+                    </a>
+                    <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
+                    <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
+                </li>
+            {% else %}
+                <li>Pas de tâches à afficher</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune tâche à afficher</p>
+    {% endif %}
 
     <h3>Les tâches de mes tâches</h3>
-    <ul>
-        {% for task in tasksUsers %}
-            <li>
-                <a href="{{ path('task_show', {'id': task.id}) }}">
-                    {{ task.user.email|split('@')[0]|capitalize }} - {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
-                </a>
-                <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
-                <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
-            </li>
-        {% else %}
-            <li>Pas de tâches à afficher</li>
-        {% endfor %}
-    </ul>
+    {% if tasksUsers is not empty %}
+        <ul>
+            {% for task in tasksUsers %}
+                <li>
+                    <a href="{{ path('task_show', {'id': task.id}) }}">
+                        {{ task.user.email|split('@')[0]|capitalize }} - {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
+                    </a>
+                    <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
+                    <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
+                </li>
+            {% else %}
+                <li>Pas de tâches à afficher</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune tâche à afficher</p>
+    {% endif %}
 
 {% else %}
     <h3>Mes tâches</h3>
-    <ul>
-        {% for task in tasksAdmin %}
-            <li>
-                <a href="{{ path('task_show', {'id': task.id}) }}">
-                    {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
-                </a>
-                <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
-                <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
-            </li>
-        {% else %}
-            <li>Pas de tâches à afficher</li>
-        {% endfor %}
-    </ul>
+    {% if tasksUsers is not empty %}
+        <ul>
+            {% for task in tasksUsers %}
+                <li>
+                    <a href="{{ path('task_show', {'id': task.id}) }}">
+                        {{ task.title }} - {{ task.content }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.createdAt|date('d/m/Y H:i:s') }} - {{ task.updatedAt is empty ? "" : task.updatedAt|date('d/m/Y H:i:s') }}
+                    </a>
+                    <a href="{{ path('task_edit', {'id': task.id}) }}">edit</a>
+                    <a href="{{ path('task_delete', {'id': task.id}) }}">delete</a>
+                </li>
+            {% else %}
+                <li>Pas de tâches à afficher</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune tâche à afficher</p>
+    {% endif %}
 {% endif %}
 
 

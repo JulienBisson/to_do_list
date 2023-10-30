@@ -25,12 +25,12 @@ class TaskController extends AbstractController
     }
 
     #[Route('/', name: 'task_index', methods: ['GET'])]
-    public function index(UserInterface $user): Response
+    public function index(Request $request, Security $security): Response
     {
-        $user = $this->getUser();
+        $user = $security->getUser();
 
         // Vérifie si l'utilisateur est un super admin
-        if ($this->isGranted('ROLE_SUPER_ADMIN', $user)) {
+        if ($security->isGranted('ROLE_SUPER_ADMIN')) {
             // Requête pour le super admin
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
 
@@ -63,13 +63,13 @@ class TaskController extends AbstractController
 
         } else {
             // Requête pour les utilisateurs normaux (excluant les tâches du super admin)
-            $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
-            $tasksUsers = [];
+            $tasksUsers = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
+            // $tasksUsers = [];
         }
     
         return $this->render('task/index.html.twig', [
-            'tasksAdmin' => $tasksAdmin,
-            'tasksUsers' => $tasksUsers,
+            'tasksAdmin' => $tasksAdmin ?? [],
+            'tasksUsers' => $tasksUsers ?? [],
         ]);
     }
 

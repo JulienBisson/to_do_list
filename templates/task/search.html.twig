@@ -1,14 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-
-<nav class="navbar navbar-light bg-light">
-  <form class="form-inline">
-    {{ form(search_form)}}
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-  </form>
-</nav>
-
-
-{% endblock   %}
+    <a href="{{ path('task_index') }}"><i class="fa-solid fa-arrow-left"></i></a>
+    <form action="{{ path('search') }}" method="get">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchTask" placeholder="Search for title or content" value="{{ searchTask }}">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+        </div>
+    </form>
+{% endblock %}

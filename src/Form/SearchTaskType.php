@@ -15,20 +15,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SearchTaskType extends AbstractType
 {
 
-  public function buildForm(FormBuilderInterface $builder, array $options)
-  {
+  // public function buildForm(FormBuilderInterface $builder, array $options)
+  // {
 
-    $builder
-    ->add(child: "title")
-    ->add(child: "content")
-    ->add(child: "title");
-  }
+  //   $builder
+  //   ->add(child: "title")
+  //   ->add(child: "content");
+  // }
 
-  public function configureOptions(OptionsResolver $resolver): void
-  {
-      $resolver->setDefaults([
-          'data_class' => Tasks::class,
-      ]);
-  }
+  // public function configureOptions(OptionsResolver $resolver): void
+  // {
+  //     $resolver->setDefaults([
+  //         'data_class' => Tasks::class,
+  //     ]);
+  // }
 
 }
