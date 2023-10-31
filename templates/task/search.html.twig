@@ -1,6 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .example-wrapper a {text-decoration: none; color: black}
+    .example-wrapper h1 {color: blue; text-align: center; font-size: 50px; margin-bottom: 50px; margin-top: 50px}
+    .example-wrapper h2, h3 {color: blue}
+</style>
+
+<div class = "example-wrapper">
+    <h1>Recherche par titre et contenu </h1>
     <a href="{{ path('task_index') }}"><i class="fa-solid fa-arrow-left"></i></a>
     <form action="{{ path('search') }}" method="get">
         <div class="input-group">
@@ -8,4 +18,5 @@
             <button class="btn btn-outline-secondary" type="submit">Search</button>
         </div>
     </form>
+</div>
 {% endblock %}

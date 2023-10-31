@@ -35,7 +35,7 @@ class TaskController extends AbstractController
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->findBy(['user' => $user->getId()]);
 
             $tasksAdmin = $this->entityManager->getRepository(Tasks::class)->createQueryBuilder('t')
-            ->where('t.user != :superAdminId')
+            ->where('t.user = :superAdminId')
             ->setParameter('superAdminId', $user->getId())
             ->orderBy('
                 CASE 
